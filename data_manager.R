@@ -10,7 +10,7 @@ library(ggthemes)
 
 # make initial table, land-on page
 make_table <- function(data) {
-    table <- data %>% select(Name, Nationality, Age, `Value(€)`, Overall) %>% 
+    table <- data %>% select(Name, Nationality, Age, "Value(\u20AC)", Overall) %>% 
         arrange('Overall', ascending=FALSE) %>%
         head(15)
     
@@ -27,7 +27,7 @@ plot_altair <- function(data, by='Overall', ascending=FALSE, show_n=10) {
         {if (ascending) arrange(., !!as.name(by)) 
             else arrange(., desc(!!as.name(by)))} %>%
         head(show_n) 
-    
+
     nation_chart <- ggplot(df_nation, 
                            aes(x = reorder(Nationality, -!!as.name(by)), 
                                y = !!as.name(by))) +
@@ -50,7 +50,31 @@ plot_altair <- function(data, by='Overall', ascending=FALSE, show_n=10) {
         labs(x = "Club", y = by) + 
         theme_light() + 
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-   
+
+
+    # chart_nationality <- df %>% 
+    #     group_by(Nationality) %>% 
+    #     summarise({{by}} := mean({{by}})) %>% 
+    #     arrange(desc({{by})) %>% 
+    #     top_n(10) %>% 
+    #     ggplot(aes(x = reorder(Nationality, -{{by}}), y = {{by}})) +
+    #     geom_bar(stat = 'identity') +
+    #     labs(x = 'Nationality', y = by_str) +
+    #     theme(axis.text.x = element_text(angle = 45, vjust = 0.8, hjust=0.5))  
+
+
+
+    # chart_nationality <- df %>% 
+    #     group_by(Club) %>% 
+    #     summarise({{by}} := mean({{by}})) %>% 
+    #     arrange(desc({{by})) %>% 
+    #     top_n(10) %>% 
+    #     ggplot(aes(x = reorder(Club, -{{by}}), y = {{by}})) +
+    #     geom_bar(stat = 'identity') +
+    #     labs(x = 'Club', y = by_str) +
+    #     theme(axis.text.x = element_text(angle = 45, vjust = 0.8, hjust=0.5))   
+
+
     return(list(nation_chart, club_chart))
 }
 

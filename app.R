@@ -11,6 +11,8 @@ source("data_manager.R")
 
 
 data <- read_csv('data/processed/processed_data.csv')
+colnames(data)[8] <- "Value(\u20AC)"
+colnames(data)[9] <- "Wage(\u20AC)"
 table <- make_table(data) %>% 
           select('Ranking', 'Name', everything())
 charts <- plot_altair(data)
@@ -63,7 +65,7 @@ app$layout(
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
-                value=list('Name', 'Nationality', 'Age', 'Value(€)', 'Overall'),
+                value=list('Name', 'Nationality', 'Age', 'Value(\u20AC)', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
                 multi=TRUE
                 ),
@@ -148,5 +150,4 @@ app$callback(
   }
 )
 
-
-app$run_server()
+app$run_server(host = '0.0.0.0', port = Sys.getenv('PORT', 8050))
