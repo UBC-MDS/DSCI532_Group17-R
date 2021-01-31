@@ -6,6 +6,7 @@ library(ggplot2)
 library(plotly)
 library(purrr)
 library(tidyverse)
+library(ggthemes)
 
 # make initial table, land-on page
 make_table <- function(data) {
@@ -32,7 +33,8 @@ plot_altair <- function(data, by='Overall', ascending=FALSE, show_n=10) {
                                y = !!as.name(by))) +
         geom_bar(stat = 'identity') +
         labs(x = "Nationality", y = by) +
-        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+        theme_light() + 
+        theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
     
     df_club <- data %>% 
         group_by(Club) %>%
@@ -46,6 +48,7 @@ plot_altair <- function(data, by='Overall', ascending=FALSE, show_n=10) {
                              y = !!as.name(by))) +
         geom_bar(stat = 'identity') + 
         labs(x = "Club", y = by) + 
+        theme_light() + 
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
    
     return(list(nation_chart, club_chart))
