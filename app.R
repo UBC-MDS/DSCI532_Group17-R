@@ -46,7 +46,7 @@ app$layout(
               htmlDiv('Order:'),
               dccDropdown(
                 id='order-widget',
-                value='True',
+                value='False',
                 options=list(list(label = 'Descending', value =  'False'),
                              list(label = 'Ascending', value = 'True')),
                 style=list('width'= '80%')
@@ -71,13 +71,14 @@ app$layout(
               )), md=3),
           dbcCol(
             list(
-              htmlH1('FIFA STAR BOARD', style=list(textAlign = 'center', color = '#0000A0', width= '80vh', height= '9vh')),
+              htmlH1('FIFA STAR BOARD', style=list(textAlign = 'center', color = '#0000A0', width= '50vh', height= '9vh')),
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
                 value=list('Name', 'Nationality', 'Age', 'Value(\u20AC)', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
-                multi=TRUE
+                multi=TRUE,
+                style=list(height= '10%')
                 ),
               dashDataTable(
                 style_table = list(
@@ -92,17 +93,17 @@ app$layout(
                                    )
                                  }),
                 data = df_to_list(table),
-                style_data_conditional = list(list('if' = list(column_id = 'Ranking'),width = '50px'),
-                                              list( 'if' = list(column_id = 'Name'),width = '50px'),
-                                              list( 'if' = list(column_id = 'Nationality'), width = '50px'),
-                                              list( 'if' = list(column_id = 'Value(\u20AC)'), width = '70px'),
-                                              list('if' = list(column_id = 'Overall'), width = '75px' ),
-                                              list('if' = list(column_id = 'Age'),width = '75px'),
-                                              list('if' = list(column_id = 'Potential'),width = '75px'),
-                                              list('if' = list(column_id = 'Overall'),  width = '75px'),
-                                              list( 'if' = list(column_id = 'Club'),  width = '75px'),
-                                              list('if' = list(column_id = 'Weight(lbs)'),width = '75px'),
-                                              list('if' = list(column_id = 'Value'),width = '75px')
+                style_data_conditional = list(list('if' = list(column_id = 'Ranking'),width = '10px'),
+                                              list( 'if' = list(column_id = 'Name'),width = '20px'),
+                                              list( 'if' = list(column_id = 'Nationality'), width = '20px'),
+                                              list( 'if' = list(column_id = 'Value(\u20AC)'), width = '20px'),
+                                              list('if' = list(column_id = 'Overall'), width = '20px' ),
+                                              list('if' = list(column_id = 'Age'),width = '20px'),
+                                              list('if' = list(column_id = 'Potential'),width = '20px'),
+                                              list('if' = list(column_id = 'Overall'),  width = '20px'),
+                                              list( 'if' = list(column_id = 'Club'),  width = '20px'),
+                                              list('if' = list(column_id = 'Weight(lbs)'),width = '20px'),
+                                              list('if' = list(column_id = 'Value'),width = '20px')
                                               )
                 )
               )
