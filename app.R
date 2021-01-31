@@ -76,7 +76,7 @@ app$layout(
               dccDropdown(
                 id='attribute-widget',
                 value=list('Name', 'Nationality', 'Age', 'Value(\u20AC)', 'Overall'),
-                options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
+                options=((data %>% colnames)[2:11]) %>% map(function(col) list(label = col, value = col)),
                 multi=TRUE,
                 style=list(height= '10%')
                 ),
@@ -92,19 +92,19 @@ app$layout(
                                      name = colName
                                    )
                                  }),
-                data = df_to_list(table),
-                style_data_conditional = list(list('if' = list(column_id = 'Ranking'),width = '10px'),
-                                              list( 'if' = list(column_id = 'Name'),width = '20px'),
-                                              list( 'if' = list(column_id = 'Nationality'), width = '20px'),
-                                              list( 'if' = list(column_id = 'Value(\u20AC)'), width = '20px'),
-                                              list('if' = list(column_id = 'Overall'), width = '20px' ),
-                                              list('if' = list(column_id = 'Age'),width = '20px'),
-                                              list('if' = list(column_id = 'Potential'),width = '20px'),
-                                              list('if' = list(column_id = 'Overall'),  width = '20px'),
-                                              list( 'if' = list(column_id = 'Club'),  width = '20px'),
-                                              list('if' = list(column_id = 'Weight(lbs)'),width = '20px'),
-                                              list('if' = list(column_id = 'Value'),width = '20px')
-                                              )
+                data = df_to_list(table)
+                # style_data_conditional = list(list('if' = list(column_id = 'Ranking'),width = '10px'),
+                #                               list( 'if' = list(column_id = 'Name'),width = '20px'),
+                #                               list( 'if' = list(column_id = 'Nationality'), width = '20px'),
+                #                               list( 'if' = list(column_id = 'Value(\u20AC)'), width = '20px'),
+                #                               list('if' = list(column_id = 'Overall'), width = '20px' ),
+                #                               list('if' = list(column_id = 'Age'),width = '20px'),
+                #                               list('if' = list(column_id = 'Potential'),width = '20px'),
+                #                               list('if' = list(column_id = 'Overall'),  width = '20px'),
+                #                               list( 'if' = list(column_id = 'Club'),  width = '20px'),
+                #                               list('if' = list(column_id = 'Weight(lbs)'),width = '20px'),
+                #                               list('if' = list(column_id = 'Value'),width = '20px')
+                #                               )
                 )
               )
             ),
