@@ -5,7 +5,7 @@ Group repository for DSCI 532, Group 17
 
 Thank you for visiting the FIFA Star Board app project repository.
 
-**Heroku link:** https://dsci532group17fifa2019.herokuapp.com/
+**Heroku link:** https://group17fifar.herokuapp.com/
 
 **A Quick Demo**
 
