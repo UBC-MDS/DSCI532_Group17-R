@@ -74,18 +74,15 @@ update_table <- function(data, by, order, cols, filter_cont, filter_club) {
     print(data)
     # update table
     if ((is.character(filter_cont) && nchar(unlist(filter_cont)) > 1)) {
-        print('in here??')
         data <- data %>% filter(Continent == filter_cont)
     }
     if ((is.character(filter_club) && nchar(unlist(filter_club)) > 1)) {
-        print('in here 2 ??')
         data <- data %>% filter(Club == filter_club)
     }
-    print('again')
-    print(data)
     table <- data[unlist(cols)]
-    print(table)
-    table <- table %>% arrange(by=!!as.name(by), ascending=order)
+    table <- table %>% 
+        {if (order) arrange(., by=!!as.name(by))
+            else arrange(., by=desc(!!as.name(by)))}
     table$Ranking <- seq.int(nrow(data))
     table <- head(table %>% arrange(by='Rankiong', ascending=order), 15)
     

@@ -113,8 +113,9 @@ app$callback(
        input('filter-cont-widget', 'value'),
        input('filter-club-widget', 'value')),
   function(by, order, cols, filter_cont, filter_club){
-    
     new_table <- update_table(data, by, order == 'True', cols, filter_cont, filter_club)
+    
+    # returns
     list(lapply(colnames(new_table), 
                 function(colName){
                   list(
@@ -129,19 +130,23 @@ app$callback(
 
 # updates charts with Rank-by selection
 # updates only when selected col is numeric
-# app$callback(
-#   list(output(id = 'charts-1', property = 'figure'),
-#        output(id = 'charts-2', property = 'figure')),
-#   list(input('rankby-widget', 'value')),
-#   function(by){
-#     if (is_numeric(data[by]) == FALSE){
-#       list(ggplotly(charts[[1]]), ggplotly(charts[[2]]))
-#     } else{
-#       charts_temp <- plot_altair(data, by=by)
-#       list(ggplotly(charts_temp[[1]]), ggplotly(charts_temp[[2]]))
-#     }
-#   }
-# )
+app$callback(
+  list(output(id = 'charts-1', property = 'figure'),
+       output(id = 'charts-2', property = 'figure')),
+  list(input('rankby-widget', 'value')),
+  function(by){
+    if (is_numeric(data[[by]]) == FALSE){
+      print(data[by])
+      print('not numeric')
+      list(ggplotly(charts[[1]]), ggplotly(charts[[2]]))
+    } else{
+      print('numeric')
+      print(data[by])
+      charts_temp <- plot_altair(data, by=by)
+      list(ggplotly(charts_temp[[1]]), ggplotly(charts_temp[[2]]))
+    }
+  }
+)
 
 
 app$run_server()
