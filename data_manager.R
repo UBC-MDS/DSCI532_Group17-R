@@ -6,6 +6,7 @@ library(ggplot2)
 library(plotly)
 library(purrr)
 library(tidyverse)
+library(ggthemes)
 
 # make initial table, land-on page
 make_table <- function(data) {
@@ -19,27 +20,35 @@ make_table <- function(data) {
 }
 
 # make initial charts, land-on page
-plot_altair <- function(data, by=Overall, by_str='Overall', ascending=FALSE, show_n=10) {
+plot_altair <- function(data, by='Overall', ascending=FALSE, show_n=10) {
     df_nation <- data %>% 
         group_by(Nationality) %>%
-        summarise({{by}} := mean({{by}})) %>%
-        arrange({{by}}, ascending=FALSE) %>%
+        summarise({{by}} := mean(!!as.name(by))) %>%
+        {if (ascending) arrange(., !!as.name(by)) 
+            else arrange(., desc(!!as.name(by)))} %>%
         head(show_n) 
 
-    nation_chart <- ggplot(df_nation, aes(x = reorder(Nationality, -{{by}}), y = {{by}})) +
-        geom_bar(stat = 'identity') + 
-        labs(x = "Nationality", y = by_str) + 
+    nation_chart <- ggplot(df_nation, 
+                           aes(x = reorder(Nationality, -!!as.name(by)), 
+                               y = !!as.name(by))) +
+        geom_bar(stat = 'identity') +
+        labs(x = "Nationality", y = by) +
+        theme_light() + 
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
     
     df_club <- data %>% 
         group_by(Club) %>%
-        summarise({{by}} := mean({{by}})) %>%
-        arrange({{by}}, ascending=FALSE) %>%
+        summarise({{by}} := mean(!!as.name(by))) %>%
+        {if (ascending) arrange(., !!as.name(by)) 
+            else arrange(., desc(!!as.name(by)))} %>%
         head(show_n) 
     
-    club_chart <- ggplot(df_club, aes(x = reorder(Club, -{{by}}), y = {{by}})) +
+    club_chart <- ggplot(df_club, 
+                         aes(x = reorder(Club, -!!as.name(by)), 
+                             y = !!as.name(by))) +
         geom_bar(stat = 'identity') + 
-        labs(x = "Club", y = by_str) + 
+        labs(x = "Club", y = by) + 
+        theme_light() + 
         theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 
@@ -70,6 +79,7 @@ plot_altair <- function(data, by=Overall, by_str='Overall', ascending=FALSE, sho
 }
 
 
+
 # Updates table from given parameters
 #
 # df : dataframe, processed dataset
@@ -80,3 +90,32 @@ plot_altair <- function(data, by=Overall, by_str='Overall', ascending=FALSE, sho
 # filter_club: str, column to filter Club on
 #
 # return : dataframe, top ten rows of the sorted dataset
+update_table <- function(data, by, order, cols, filter_cont, filter_club) {
+    # column conditions
+    # 1. by (sort by) column must be present
+    # 2. player Name must be present
+    if (!by %in% cols)
+        cols <- c(cols, by)
+    if (!'Name' %in% cols)
+        cols <- c(cols, 'Name')
+    print(data)
+    # update table
+    if ((is.character(filter_cont) && nchar(unlist(filter_cont)) > 1)) {
+        data <- data %>% filter(Continent == filter_cont)
+    }
+    if ((is.character(filter_club) && nchar(unlist(filter_club)) > 1)) {
+        data <- data %>% filter(Club == filter_club)
+    }
+    table <- data[unlist(cols)]
+    table <- table %>% 
+        {if (order) arrange(., by=!!as.name(by))
+            else arrange(., by=desc(!!as.name(by)))}
+    table$Ranking <- seq.int(nrow(data))
+    table <- head(table %>% arrange(by='Rankiong', ascending=order), 15)
+    
+    # Re-arrange columns
+    cols <- c(cols, 'Ranking')
+    table <- table %>%
+        select('Ranking', 'Name', everything())
+    return(table)
+}
