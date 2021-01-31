@@ -3,7 +3,7 @@
 Group repository for DSCI 532, Group 17
 
 ### Heroku link:
-https://dsci532group17fifa2019.herokuapp.com/
+https://group17fifar.herokuapp.com/
 
 ## Welcome!
 
