@@ -11,7 +11,8 @@ source("data_manager.R")
 
 
 data <- read_csv('data/processed/processed_data.csv')
-table <- make_table(data)
+table <- make_table(data) %>% 
+          select('Ranking', 'Name', everything())
 charts <- plot_altair(data)
 
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
@@ -62,7 +63,7 @@ app$layout(
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
-                value=list('Name', 'Nationality', 'Age', 'Value(€)"', 'Overall'),
+                value=list('Name', 'Nationality', 'Age', 'Value(€)', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
                 multi=TRUE
                 ),
@@ -75,8 +76,12 @@ app$layout(
                                      name = colName
                                    )
                                  }),
-                data = df_to_list(table)
-                )
+                data = df_to_list(table),
+                style_cell_conditional = list(
+                  list(
+                    width = '30%'
+                  )
+                ))
               )),
          dbcCol(
            list(
@@ -88,47 +93,55 @@ app$layout(
              dccGraph(
                id='charts-1',
                figure = ggplotly(charts[[1]]),
-               style=list('border-width'= '0', 'width' = '150%', 'height' = '350px')
+               style=list('border-width'= '0', 'width' = '120%', 'height' = '350px')
                ),
              dccGraph(
                id='charts-2',
                figure = ggplotly(charts[[2]]),
-               style=list('border-width'= '0', 'width' = '150%', 'height' = '350px')
+               style=list('border-width'= '0', 'width' = '120%', 'height' = '350px')
              )
            ), md=3)
           )))))
     
 # updates table from all 5 dropdowns
-# app$callback(
-#   output(id = 'table', property = 'figure'),
-#   list(input('rankby-widget', 'value'),
-#        input('order-widget', 'value'),
-#        input('attribute-widget', 'value'),
-#        input('filter-cont-widget', 'value'),
-#        input('filter-club-widget', 'value')),
-#   function(by, order, cols, filter_cont, filter_club){
-#     update_table(data, by, order == "True", cols, filter_cont, filter_club)
-#     
-#   }
-# )
+app$callback(
+  list(output(id = 'table', property = 'columns'),
+       output(id = 'table', property = 'data')),
+  list(input('rankby-widget', 'value'),
+       input('order-widget', 'value'),
+       input('attribute-widget', 'value'),
+       input('filter-cont-widget', 'value'),
+       input('filter-club-widget', 'value')),
+  function(by, order, cols, filter_cont, filter_club){
+    
+    new_table <- update_table(data, by, order == 'True', cols, filter_cont, filter_club)
+    list(lapply(colnames(new_table), 
+                function(colName){
+                  list(
+                    id = colName,
+                    name = colName
+                  )
+                }), 
+         df_to_list(new_table))
+  }
+)
 
 
-
-
-# updates charts with Rank-by selection 
+# updates charts with Rank-by selection
 # updates only when selected col is numeric
 # app$callback(
-#   output(id = 'charts', property = 'figure'),
+#   list(output(id = 'charts-1', property = 'figure'),
+#        output(id = 'charts-2', property = 'figure')),
 #   list(input('rankby-widget', 'value')),
 #   function(by){
-#     if (is_numeric(data$by) == FALSE){
-#       return charts
+#     if (is_numeric(data[by]) == FALSE){
+#       list(ggplotly(charts[[1]]), ggplotly(charts[[2]]))
 #     } else{
-#       plot_altair(data, by=by)
+#       charts_temp <- plot_altair(data, by=by)
+#       list(ggplotly(charts_temp[[1]]), ggplotly(charts_temp[[2]]))
 #     }
-#     
 #   }
 # )
 
 
-app$run_server(debug = T)
+app$run_server()
